@@ -1,0 +1,8 @@
+setup.py
+spotify_adaptors/__init__.py
+spotify_adaptors/spotify_adaptors.py
+spotify_adaptors/test_spotify_adaptors.py
+spotify_adaptors.egg-info/PKG-INFO
+spotify_adaptors.egg-info/SOURCES.txt
+spotify_adaptors.egg-info/dependency_links.txt
+spotify_adaptors.egg-info/top_level.txt
