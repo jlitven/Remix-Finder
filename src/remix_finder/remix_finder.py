@@ -12,14 +12,18 @@ remix_finder searches a user's favorite artists to find remixes
 they will enjoy.
 """
 import sys
+from spotify_adaptors import User, Artist, Track
 
 def get_recommended_remixes(user):
     """
     Find recommended remixes for the given user.
 
     The remixes are found by searching the network of user's
-    favorite artists and their similar artists. If the remixer
-    and the remixee are in the network, the track
+    favorite artists and their similar artists. Two lists are
+    computed: remixes by the artists, and artist tracks other
+    artists have remixed. If a track appears on both lists,
+    then both the remixer and remixee are in the network, and
+    we recommend it to the user.
 
     Args:
         user: A Spotify user.
@@ -27,64 +31,23 @@ def get_recommended_remixes(user):
     Output:
         remixes: A list of tracks.
     """
-    user_artists = get_top_artists(user)
-    similar_artists = [get_similar_artists(a) for a in user_artists]
-    artists = user_artists | similar_artists
+    artists = user.get_top_artists()  # TODO: Add similar artists
 
-    remixes = []
+    artist_remixes = []
+    artist_tracks_others_remixed = []
+
     for artist in artists:
-        artist_remixes = get_tracks_remixed_by(artist)
-        for remix in artist_remixes:
+        remixes = artist.get_remixes()
+        other_artists_remixed = artist.get_tracks_others_remixed()
+        artist_remixes.extend(remixes)
+        artist_tracks_others_remixed.extend(other_artists_remixed)
 
-            if (remix.original_artist in artists and
-                    remix.remix_artist in artists):
-                remixes.append(remix)
+    remix_uris = set([r.uri for r in artist_remixes])
+    other_remixed_uris = set([r.uri for r in artist_tracks_others_remixed])
 
-    return remixes
+    recommended_uris = remix_uris & other_remixed_uris
 
-def get_top_artists(user):
-    """Get the top artists of a given user.
-
-    Args:
-        user: A Spotify user.
-
-    Output:
-        result: A list of top artists.
-    """
-    pass
-
-def get_similar_artists(artist):
-    """Get similar artists to the given artist.
-
-    Args:
-        artist: A Spotify artist.
-
-    Output:
-        result: A list of spotify artists.
-    """
-    pass
-
-def get_tracks_remixed_by(artist):
-    """Get all tracks that are remixed by the given artist.
-
-    Args:
-        artist: A Spotify artist.
-
-    Output:
-        result: A list of Spotify tracks.
-    """
-    pass
-
-def get_tracks_others_remixed(artist):
-    """Get all tracks of the artist that are remixed by other artists.
-
-    Args:
-        artist: A Spotify artist.
-
-    Output:
-        result: A list of Spotify tracks.
-    """
-
+    return [r for r in artist_remixes if r.uri in recommended_uris]
 
 def main():
     """Display recommended remixes to user."""

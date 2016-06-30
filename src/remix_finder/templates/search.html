@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Remix Finder</title>
+
+    <link href="static/login.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href= "{{ url_for('static',filename='bootstrap.css') }}" rel="stylesheet" media="screen">
+
+    <link href="{{ url_for('static',filename='search.css') }}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <img class="img" id="logo" src="{{url_for('static',filename='logo.png')}}">
+
+    <div class="container">
+
+      <!-- Login form -->
+      <form method="post" value="search" class="form-signin" role="form">
+
+        <!-- Search Query -->
+        <div class="form-group">
+            <input name="query" type="text" class="form-control" id="query" placeholder="Artist Name">
+        </div>
+
+        <!-- Submit button -->
+        <div class="form-group">
+          <button type="submit" name="submit" value="search" class="btn btn-default">Search
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+
+  </body>
+</html>

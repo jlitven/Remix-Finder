@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Remix Finder</title>
+
+    <!-- Custom fonts -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/font-awesome/css/font-awesome.min.css') }}">
+
+    <!-- Bootstrap -->
+    <link href= "{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <link href= "{{ url_for('static',filename='bootstrap.css') }}" rel="stylesheet" media="screen">
+
+    <!-- Custom styles -->
+    <link href="{{ url_for('static',filename='results.css') }}" rel="stylesheet">
+  </head>
+  <body style="background-image: url({{artist_image_url}});
+    background-repeat: no-repeat;background-attachment: fixed;
+    background-position: center;">
+
+    <div id="header">
+    </div>
+
+    <div class="container">
+
+        <audio class="player" id='audio_player'>
+            <source id='source' src='' type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+
+        <div class="col-md-12 results-container">
+
+            <!-- Artist Remixed -->
+            <span class="remixed_header">Remixed by </span><span class="artist_name">{{artist_name}}</span>
+
+            <!-- Remix Results -->
+            {% for track in artist_remixed%}
+
+            <div>
+
+                <button class="control" id="{{track.uri}}" type="button" onclick="play_pause('{{ track['preview_url'] }}','{{track.uri}}')">{{ track }}
+                    <i id="play_{{track.uri}}" class="fa fa-play"></i>
+                    <i id="pause_{{track.uri}}" class="fa fa-pause"></i>
+                </button>
+
+            </div>
+            <br>
+
+            {% endfor %}
+
+            <! -- Create the playlist -->
+            <form action="" method="post">
+
+                {% if created_1 %}
+
+                <button disabled class="btn btn-default" name="submit"
+                        type="submit" value="artist_remixed">
+                        Playlist Created!
+                </button>
+
+                {% else %}
+
+                <button class="btn btn-default" name="submit"
+                        type="submit" value="artist_remixed">
+                        Create Spotify Playlist
+                </button>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+        <div class="col-md-12 results-container">
+
+            <!-- Others Remixed -->
+            <h2><span class="artist_name">{{artist_name}}</span> <span class="remixed_header"> Remixed</span></h2>
+
+            <!-- Remix Results -->
+            {% for track in others_remixed%}
+
+            <div> {{ track }}
+
+                <button class="control" id="other_{{track.uri}}" type="button" onclick="play_pause('{{ track['preview_url'] }}', 'other_{{track.uri}}')">
+                    <i id="play_other_{{track.uri}}" class="fa fa-play"></i>
+                    <i id="pause_other_{{track.uri}}" class="fa fa-pause"></i>
+                </button>
+
+            </div>
+            <br>
+
+            {% endfor %}
+
+             <! -- Create the playlist -->
+            <form action="" method="post">
+
+                {% if created_2 %}
+
+                <button disabled class="btn btn-default" name="submit"
+                        type="submit" value="other_remixed">
+                        Playlist Created!
+                </button>
+
+                {% else %}
+
+                <button class="btn btn-default" name="submit"
+                        type="submit" value="other_remixed">
+                        Create Spotify Playlist
+                </button>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+
+    function pause(id) {
+        var play_icon = document.getElementById('play_' + id)
+        var pause_icon = document.getElementById('pause_' + id)
+        pause_icon.style.display = "none";
+        play_icon.style.display = "initial";
+    }
+
+    function pause_all(){
+        var players = document.getElementsByClassName("control");
+        for (var i = 0; i < players.length; i++) {
+            pause(players[i].id);
+        }
+    }
+
+    function play(id) {
+        pause_all();
+        var play_icon = document.getElementById('play_' + id);
+        var pause_icon = document.getElementById('pause_' + id);
+        play_icon.style.display = "none";
+        pause_icon.style.display = "initial";
+
+    }
+
+    function play_pause(src, id) {
+        var myAudio = document.getElementById('audio_player');
+        var source = document.getElementById('source');
+        if (source.src != src){
+           source.src = src;
+           myAudio.load();
+           myAudio.play();
+           play(id);
+        }else
+        {
+            if (myAudio.paused){
+                myAudio.play(id);
+                play(id);
+            }else{
+                myAudio.pause(id);
+                pause(id);
+            }
+        }
+    }
+    $("#audio_player").bind("ended", function(){
+        pause_all();
+    });
+
+    </script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="static/js/bootstrap.min.js"></script>
+  </body>
+</html>

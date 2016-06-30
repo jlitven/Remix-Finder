@@ -1,0 +1,65 @@
+
+body {
+    font-family: Courier;
+    font-size: 18px;
+}
+
+h1 {
+  font-size: 72px;
+  text-align: center;
+}
+
+.remixed_header{
+    display: inline-block;
+    font-family:lazer84;
+     background: -webkit-linear-gradient(#f90000, #9200b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 50px;
+    padding: 10px;
+}
+
+.artist_name {
+    top: 5px;
+    position: relative;
+    display: inline-block;
+    font-size: 50px;
+    font-family: Monoton;
+     background: -webkit-linear-gradient(#f90000, #9200b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 10px;
+}
+
+.control {
+    background-color: rgba(0, 0, 0, 0.0);
+    color: white;
+    border: none;
+}
+
+.fa-pause {
+    display: none;
+}
+
+.results-container {
+    background-color: rgba(0, 0, 0, 0.90);
+    margin-top: 50px;
+    margin-bottom:50px;
+    text-align: center;
+}
+
+img {
+    margin: auto;
+    width: 30%;
+}
+
+#header {
+    margin: 25%;
+}
+
+.btn {
+    margin: 20px;
+    font-size: 20px;
+    font-family: ;
+}
+
