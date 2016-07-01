@@ -48,9 +48,8 @@ h1 {
     text-align: center;
 }
 
-img {
-    margin: auto;
-    width: 30%;
+.icon {
+    width: 10%;
 }
 
 #header {

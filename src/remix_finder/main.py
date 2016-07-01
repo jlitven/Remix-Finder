@@ -9,6 +9,8 @@ import base64
 import urllib
 import json
 import requests
+import time
+import re
 from flask import Flask, request, redirect, g, render_template, url_for
 from spotify_adaptors import Artist, User
 
@@ -43,10 +45,8 @@ auth_query_parameters = {
 # Server data
 ARTIST = None
 USER = None
-PLAYLIST_TRACKS = None
-PLAYLIST_NAME = ""
-CREATED_1 = False
-CREATED_2 = False
+PLAYLISTS = None
+USER_PLAYLIST_KEY = ''
 
 @app.route("/login")
 def login():
@@ -76,55 +76,99 @@ def callback():
     if access_token:
         global USER
         USER = User(access_token)
-        USER.create_playlist(PLAYLIST_TRACKS, PLAYLIST_NAME)
+        playlist = [p for p in PLAYLISTS if p['key'] == USER_PLAYLIST_KEY][0]
+        USER.create_playlist(playlist['tracks'], playlist['name'])
+        playlist['created'] = True
         return redirect(url_for('results'))
     else:
         return "Couldn't obtain access token!"
 
-@app.route('/results/', methods=['GET', 'POST'])
-def results():
-    """Return the results page."""
-    artist_remixed = ARTIST.get_remixes()
-    others_remixed = ARTIST.get_tracks_others_remixed()
-    #related_artists = ARTIST.get_related_artists()[:10]
-    #related_remixes = []
-    #for rel_artist in related_artists:
-     #   remixes = rel_artist.get_remixes()
-      #  related_remixes.extend(remixes)
 
+@app.route('/results', methods=['GET', 'POST'])
+def results():
+    """Return the search results or create a playlist."""
     if request.method == 'GET':
         return render_template("results.html",
-                               artist_name=ARTIST.name,
-                               artist_image_url=ARTIST.image_url,
-                               artist_remixed=artist_remixed,
-                               others_remixed=others_remixed,
-                               created_1=CREATED_1,
-                               created_2=CREATED_2)
+                               artist=ARTIST,
+                               playlists=PLAYLISTS)
     else:
-        # Create the playlist tracks and login the user
-        global PLAYLIST_TRACKS, PLAYLIST_NAME, CREATED_1, CREATED_2
-        if request.form['submit'] == 'artist_remixed':
-            PLAYLIST_TRACKS = artist_remixed
-            PLAYLIST_NAME = 'Remixed by ' + ARTIST.name
-            CREATED_1 = True
-        else:
-            PLAYLIST_TRACKS = others_remixed
-            PLAYLIST_NAME = ARTIST.name + ' Remixed'
-            CREATED_2 = True
+        global USER_PLAYLIST_KEY
+        USER_PLAYLIST_KEY = request.form['key']
         return redirect(url_for('login'))
+
+def wrap(name):
+    """Wrap the artist name in a span for styling."""
+    return "<span class='artist_name'>{}</span>".format(name)
+
+def create_playlists(artist):
+    """Create a dict of remix playlists."""
+
+    num_remixes = 10
+    num_artists = 1
+    playlists = {}
+    wrapped_name = wrap(artist.name)
+    artist_name = artist.name
+
+    # remixed_by_artist playlist
+    remixed_by_artist = {
+        'tracks': artist.get_remixes(num_remixes),
+        'name': 'Remixed By ' + artist_name,
+        'created': False,
+        'key': 'remixed_by_artist'
+    }
+
+    # artist_remixed playlist
+    artist_remixed = {
+        'tracks': artist.get_tracks_others_remixed(num_remixes),
+        'name': artist_name + ' Remixed',
+        'created': False,
+        'key': 'artist_remixed'
+    }
+
+    # related_remixes playlist
+    related_artists = artist.get_related_artists()[:num_artists]
+    tracks = sorted([r for a in related_artists for r in a.get_remixes()],
+                    key=lambda track: track.popularity)
+
+    related_remixes = {
+        'tracks': tracks,
+        'name': artist_name + ' Related Remixes',
+        'created': False,
+        'key': 'related_remixes'
+    }
+
+    playlists = [
+        remixed_by_artist,
+        artist_remixed,
+        related_remixes
+    ]
+
+    # Add styled names for html
+    for p in playlists:
+        p['styled_name'] = re.sub(artist_name, wrapped_name, p['name'])
+
+    return playlists
+
+@app.route('/<query>')
+def load_results():
+    """Load the playlists from the artist query."""
+    global ARTIST, PLAYLISTS
+    artist_query = request.form['query']
+    ARTIST = Artist.create_from_query(artist_query)
+    PLAYLISTS = create_playlists(ARTIST)
+    return redirect(url_for('results'))
 
 @app.route('/', methods=['GET', 'POST'])
 def search():
     """The search page."""
     if request.method == 'POST':
-        global ARTIST, CREATED_1, CREATED_2
-        CREATED_1 = CREATED_2 = False
+        global ARTIST, PLAYLISTS
         artist_query = request.form['query']
         ARTIST = Artist.create_from_query(artist_query)
+        PLAYLISTS = create_playlists(ARTIST)
         return redirect(url_for('results'))
 
     return render_template('search.html')
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=PORT)

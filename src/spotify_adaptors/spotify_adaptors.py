@@ -63,6 +63,28 @@ def query_spotify(query, type='track', num_results=10):
     wrapped_results = [wrapper(i) for i in items]
     return wrapped_results
 
+def unique_decorator(func):
+    """
+    Given a list of tracks from a func return uniquely named tracks.
+
+    If multiple tracks have the same name, the track
+    with the highest popularity is chosen.
+    """
+    def unique_func(*args, **kwargs):
+        tracks = func(*args, **kwargs)
+        unique_tracks = {}
+        for track in tracks:
+            if track.name in tracks:
+                if track.popularity > tracks['name'].popularity:
+                    unique_tracks['name'] = track
+            else:
+                unique_tracks[track.name] = track
+
+        return sorted(unique_tracks.values(),
+                      key=lambda track: track.popularity,
+                      reverse=True)
+    return unique_func
+
 class User:
     """A Spotify user."""
 
@@ -157,28 +179,6 @@ class Artist(SpotipyDict):
         queried_artists = query_spotify(query, type='artist')
         return queried_artists[0]
 
-    def unique_decorator(func):
-        """
-        Given a list of tracks from a func return uniquely named tracks.
-
-        If multiple tracks have the same name, the track
-        with the highest popularity is chosen.
-        """
-        def unique_func(*args, **kwargs):
-            tracks = func(args, kwargs)
-            unique_tracks = {}
-            for track in tracks:
-                if track.name in tracks:
-                    if track.popularity > tracks['name'].popularity:
-                        unique_tracks['name'] = track
-                else:
-                    unique_tracks[track.name] = track
-
-            return sorted(unique_tracks.values(),
-                          key=lambda track: track.popularity,
-                          reverse=True)
-        return unique_func
-
     def get_top_tracks(self):
         """Return the artist's top tracks."""
         return [Track(t)
@@ -200,6 +200,7 @@ class Artist(SpotipyDict):
         Query for remixes, and only return the tracks
         with the artist name in the track name.
         """
+        # TODO: Make a smarter filter to avoid the wrong artist
         remixes = [r for r in self.query_remixes(num_tracks) if self.name in r.name]
         return remixes
 
@@ -213,7 +214,7 @@ class Artist(SpotipyDict):
         others_remixed = [r for r in self.query_remixes(num_tracks) if self.uri in r.artist.uri]
         return others_remixed
 
-    # @unique_decorator
+    @unique_decorator
     def query_remixes(self, num_tracks=10):
         """Return the query searching for 'artist remix'."""
         if not self._cached_query or len(self._cached_query) < num_tracks:

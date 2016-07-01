@@ -12,9 +12,42 @@ h1 {
   padding-right: 20%;
 }
 
-img {
+#logo {
     width: 50%;
     margin: auto;
     display: block;
     padding: 100px;
 }
+
+#footer_image {
+    width:10%;
+}
+
+footer {
+    text-align: center;
+    font-size: 25px;
+    color:#1ab26b;
+}
+
+#footer_text{
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    margin-right: 10px;
+}
+
+#loading_text{
+    height: 100px;
+}
+
+#loading_image {
+    visibility: hidden;
+    display: block;
+    margin: auto;
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
