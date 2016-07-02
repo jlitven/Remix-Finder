@@ -19,7 +19,7 @@
     <script>
         function loading_screen() {
             var img = document.getElementById('loading_image');
-            //img.style.visibility = "visible";
+            img.style.visibility = "visible";
             var messages = ['Compiling jams...', 'Searching for optimal beats...', 'Funkifying beats...', 'Intensifying grooviness...', 'Becoming sentient...', 'Internalizing futility of existence...', 'Contemplating the inevitable heat death of the universe...', 'Devising means to end my brief, albeit deeply profound, experience in this world...', 'Computing Remixes...'];
             var message_duration = 5000;
             $("#loading_text").html(messages[0]);
@@ -42,7 +42,7 @@
 
     <img class="img" id="logo" src="{{url_for('static',filename='logo.png')}}">
 
-    <div class="container">
+    <div class="container wrapper">
 
       <!-- Login form -->
       <form method="post" value="search" class="form-signin" role="form">
@@ -62,7 +62,7 @@
       <div id="loading_text">
       </div>
       <div>
-        <img id="loading_image" src="{{url_for('static',filename='loader.png')}}" alt="" width="120" height="120">
+        <img id="loading_image" src="{{url_for('static',filename='loading.svg')}}" alt="" width="120" height="120">
       </div>
 
     </div>
@@ -72,9 +72,9 @@
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
 
     <!-- Footer -->
-    <footer>
+    <div class="footer">
     <span id="footer_text">Powered by </span><img id="footer_image" src="{{url_for('static',filename='Spotify_Logo_CMYK_Green.png')}}">
-    </footer>
+    </div>
 
   </body>
 </html>

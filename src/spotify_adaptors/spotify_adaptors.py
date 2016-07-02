@@ -176,8 +176,12 @@ class Artist(SpotipyDict):
     @staticmethod
     def create_from_query(query):
         """Create an artist from a spotify query."""
-        queried_artists = query_spotify(query, type='artist')
-        return queried_artists[0]
+        try:
+            queried_artists = query_spotify(query, type='artist')
+            return queried_artists[0]
+        except:
+            print 'The query {} did not find any artist.'
+            raise
 
     def get_top_tracks(self):
         """Return the artist's top tracks."""
