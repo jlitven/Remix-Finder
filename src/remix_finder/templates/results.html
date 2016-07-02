@@ -70,7 +70,7 @@
                     {% endif %}
 
                     class="btn btn-default btn-sm" name="submit" type="submit">
-                            <img class="icon" src="{{ url_for('static',filename='spotify.ico') }}">
+                            <img class="icon" src="{{ url_for('static',filename='images/spotify.ico') }}">
                             <span>
 
                             {% if playlist['created'] %}
@@ -94,74 +94,8 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
-    <script>
-
-    $(window).scroll(function() {
-      sessionStorage.scrollTop = $(this).scrollTop();
-    });
-
-    $(document).ready(function() {
-      if (sessionStorage.scrollTop != "undefined") {
-        $(window).scrollTop(sessionStorage.scrollTop);
-      }
-    });
-
-    $('.form').submit(function() {
-        var span = $(this).find('.btn').children("span");
-        span.text('Creating Playlist...');
-        $(this).find('.btn').prop('disabled', true);
-    });
-
-    function pause(id) {
-        var play_icon = document.getElementById('play_' + id)
-        var pause_icon = document.getElementById('pause_' + id)
-        pause_icon.style.display = "none";
-        play_icon.style.display = "initial";
-    }
-
-    function pause_all(){
-        var players = document.getElementsByClassName("control");
-        for (var i = 0; i < players.length; i++) {
-            pause(players[i].id);
-        }
-    }
-
-    function play(id) {
-        pause_all();
-        var play_icon = document.getElementById('play_' + id);
-        var pause_icon = document.getElementById('pause_' + id);
-        play_icon.style.display = "none";
-        pause_icon.style.display = "initial";
-
-    }
-
-    function play_pause(src, id) {
-        var myAudio = document.getElementById('audio_player');
-        var source = document.getElementById('source');
-        if (source.src != src){
-           source.src = src;
-           myAudio.load();
-           myAudio.play();
-           play(id);
-        }else
-        {
-            if (myAudio.paused){
-                myAudio.play(id);
-                play(id);
-            }else{
-                myAudio.pause(id);
-                pause(id);
-            }
-        }
-    }
-    $("#audio_player").bind("ended", function(){
-        pause_all();
-    });
-
-    </script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/js/maintainscroll.jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='results.js') }}"></script>
   </body>
 </html>

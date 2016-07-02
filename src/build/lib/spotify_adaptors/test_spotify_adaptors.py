@@ -35,17 +35,24 @@ class TestUser(unittest.TestCase):
 class TestTrack(unittest.TestCase):
     """Unit tests for class Track."""
 
-    def test_create_track(self):
-        """Create a track and check properties."""
-        track_uri = 'spotify:track:5SYYfoHNkDBgBWawXbYc4H'
-        track_name = 'Entoptica'
-        artist_name = 'Starcadian'
-        spotify_track = SPOTIFY.track(track_uri)
-        track = Track(spotify_track)
+    def setUp(self):
+        """Create a track."""
+        self.track_uri = 'spotify:track:5SYYfoHNkDBgBWawXbYc4H'
+        self.track_name = 'Entoptica'
+        self.artist_name = 'Starcadian'
+        self.spotify_track = SPOTIFY.track(self.track_uri)
+        self.track = Track(self.spotify_track)
 
-        self.assertEqual(track.uri, track_uri)
-        self.assertEqual(track.name, track_name)
-        self.assertEqual(track.artist.name, artist_name)
+    def test_create_track(self):
+        """Check the track properties."""
+        self.assertEqual(self.track.uri, self.track_uri)
+        self.assertEqual(self.track.name, self.track_name)
+        self.assertEqual(self.track.artist.name, self.artist_name)
+
+    def test_create_from_query(self):
+        """Test creating a track from a spotify query."""
+        queried_track = Track.create_from_query('starcadian entoptica')
+        self.assertEqual(queried_track, self.track)
 
 class TestArtist(unittest.TestCase):
     """Unit tests for class Artist."""
@@ -62,6 +69,11 @@ class TestArtist(unittest.TestCase):
             with open('./test_data/spotify_data', 'rb') as handle:
                 self.spotify_artist = pickle.load(handle)
         self.artist = Artist(self.spotify_artist)
+
+    def test_create_from_query(self):
+        """Test creating an artist from a query."""
+        queried_artist = Artist.create_from_query('starcadian')
+        self.assertEqual(self.artist, queried_artist)
 
     def test_artist_properties(self):
         """Test properties."""

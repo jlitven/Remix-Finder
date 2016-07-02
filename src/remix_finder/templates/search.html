@@ -13,34 +13,11 @@
     <link href= "{{ url_for('static',filename='bootstrap.css') }}" rel="stylesheet" media="screen">
 
     <link href="{{ url_for('static',filename='search.css') }}" rel="stylesheet">
-
-    <!-- Loading Script -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script>
-        function loading_screen() {
-            var img = document.getElementById('loading_image');
-            img.style.visibility = "visible";
-            var messages = ['Compiling jams...', 'Searching for optimal beats...', 'Funkifying beats...', 'Intensifying grooviness...', 'Becoming sentient...', 'Internalizing futility of existence...', 'Contemplating the inevitable heat death of the universe...', 'Devising means to end my brief, albeit deeply profound, experience in this world...', 'Computing Remixes...'];
-            var message_duration = 5000;
-            $("#loading_text").html(messages[0]);
-            (function theLoop (i) {
-              setTimeout(function () {
-                if (--i) {
-                    $("#loading_text").fadeOut(function() {
-                    $(this).text(messages[messages.length-i])
-                    }).fadeIn();
-                    theLoop(i);
-                }
-              }, message_duration);
-            })(messages.length);
-        }
-    </script>
-
   </head>
 
   <body>
 
-    <img class="img" id="logo" src="{{url_for('static',filename='logo.png')}}">
+    <img class="img" id="logo" src="{{url_for('static',filename='images/logo.png')}}">
 
     <div class="container wrapper">
 
@@ -62,18 +39,20 @@
       <div id="loading_text">
       </div>
       <div>
-        <img id="loading_image" src="{{url_for('static',filename='loading.svg')}}" alt="" width="120" height="120">
+        <img id="loading_image" src="{{url_for('static',filename='images/loading.svg')}}" alt="" width="120" height="120">
       </div>
 
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='search.js') }}"></script>
 
     <!-- Footer -->
     <div class="footer">
-    <span id="footer_text">Powered by </span><img id="footer_image" src="{{url_for('static',filename='Spotify_Logo_CMYK_Green.png')}}">
+    <span id="footer_text">Powered by </span><img id="footer_image" src="{{url_for('static',filename='images/Spotify_Logo_CMYK_Green.png')}}">
     </div>
 
   </body>

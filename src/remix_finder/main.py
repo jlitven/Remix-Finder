@@ -11,6 +11,7 @@ import json
 import requests
 import time
 import re
+import os
 from flask import Flask, request, redirect, g, render_template, url_for
 from spotify_adaptors import Artist, User
 
@@ -18,8 +19,8 @@ from spotify_adaptors import Artist, User
 app = Flask(__name__)
 
 #  Client Keys
-CLIENT_ID = "e74c52988f6d4bcebb36970a423d348d"
-CLIENT_SECRET = "0edc87deae1a4611a97b6cebef262136"
+CLIENT_ID = os.environ['SPOTIPY_CLIENT_ID']
+CLIENT_SECRET = os.environ['SPOTIPY_CLIENT_SECRET']
 
 # Spotify URLS
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -33,7 +34,7 @@ SPOTIFY_API_URL = "{}/{}".format(SPOTIFY_API_BASE_URL, API_VERSION)
 CLIENT_SIDE_URL = "http://127.0.0.1"
 PORT = 8080
 REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
-SCOPE = "user-follow-modify user-read-email"
+SCOPE = 'playlist-modify-public'
 
 auth_query_parameters = {
     "response_type": "code",
@@ -69,7 +70,6 @@ def callback():
     headers = {"Authorization": "Basic {}".format(base64encoded)}
     post_request = requests.post(SPOTIFY_TOKEN_URL, data=code_payload, headers=headers)
 
-    # Auth Step 5: Tokens are Returned to Application
     response_data = json.loads(post_request.text)
     access_token = response_data["access_token"]
 
@@ -103,8 +103,8 @@ def wrap(name):
 def create_playlists(artist):
     """Create a dict of remix playlists."""
 
-    num_remixes = 100
-    num_artists = 10
+    num_remixes = 10
+    num_artists = 1
     playlists = {}
     wrapped_name = wrap(artist.name)
     artist_name = artist.name
