@@ -40,7 +40,9 @@
             <div class="col-md-12 results-container">
 
                 <!-- Playlist Title-->
-                <span class="remixed_header">{{ playlist['styled_name']|safe }}</span>
+                <div>
+                    <span class="remixed_header">{{ playlist['styled_name']|safe }}</span>
+                </div>
 
                 <!-- Remix Results -->
                 {% for track in playlist['tracks'] %}

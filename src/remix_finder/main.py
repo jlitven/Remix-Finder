@@ -149,22 +149,16 @@ def create_playlists(artist):
 
     return playlists
 
-@app.route('/<query>')
-def load_results():
-    """Load the playlists from the artist query."""
-    global ARTIST, PLAYLISTS
-    artist_query = request.form['query']
-    ARTIST = Artist.create_from_query(artist_query)
-    PLAYLISTS = create_playlists(ARTIST)
-    return redirect(url_for('results'))
-
 @app.route('/', methods=['GET', 'POST'])
 def search():
     """The search page."""
     if request.method == 'POST':
         global ARTIST, PLAYLISTS
         artist_query = request.form['query']
-        ARTIST = Artist.create_from_query(artist_query)
+        try:
+            ARTIST = Artist.create_from_query(artist_query)
+        except:
+            return 'Error: No Artist Found!'
         PLAYLISTS = create_playlists(ARTIST)
         return redirect(url_for('results'))
 

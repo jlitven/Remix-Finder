@@ -15,3 +15,8 @@ function loading_screen() {
               }, message_duration);
             })(messages.length);
         }
+
+function loading_page() {
+    var img = document.getElementById('loading_image');
+    img.style.visibility = "hidden";
+}

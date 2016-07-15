@@ -23,7 +23,9 @@ h1 {
 }
 
 #logo {
-    width: 50%;
+    max-width: 100%;
+    height: auto;
+    width: auto; /* for ie9 */
     margin: auto;
     display: block;
     padding: 100px;
