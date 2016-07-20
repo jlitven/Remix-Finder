@@ -12,11 +12,17 @@ import requests
 import time
 import re
 import os
+import pickle
 from flask import Flask, request, redirect, g, render_template, url_for
 from spotify_adaptors import Artist, User
+from image_analysis import cluster_colors
+import random
 
 
 app = Flask(__name__)
+
+# Offline mode
+OFFLINE = False
 
 #  Client Keys
 CLIENT_ID = os.environ['SPOTIPY_CLIENT_ID']
@@ -28,7 +34,6 @@ SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_BASE_URL = "https://api.spotify.com"
 API_VERSION = "v1"
 SPOTIFY_API_URL = "{}/{}".format(SPOTIFY_API_BASE_URL, API_VERSION)
-
 
 # Server-side Parameters
 CLIENT_SIDE_URL = "http://127.0.0.1"
@@ -83,6 +88,16 @@ def callback():
     else:
         return "Couldn't obtain access token!"
 
+def get_title_gradient_colors():
+    """Return the gradient colors for the playlist titles."""
+    # TODO : Call clustering algorithm
+    try:
+        artist = ARTIST
+        most_common_colors = cluster_colors(artist.image_url, num_clusters=5)
+        colors = random.sample(most_common_colors, 2)
+    except:
+        colors = ("#f90000", "#9200b7")
+    return colors
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
@@ -90,7 +105,9 @@ def results():
     if request.method == 'GET':
         return render_template("results.html",
                                artist=ARTIST,
-                               playlists=PLAYLISTS)
+                               playlists=PLAYLISTS,
+                               font="lazer84",
+                               colors=get_title_gradient_colors())
     else:
         global USER_PLAYLIST_KEY
         USER_PLAYLIST_KEY = request.form['key']
@@ -99,6 +116,18 @@ def results():
 def wrap(name):
     """Wrap the artist name in a span for styling."""
     return "<span class='artist_name'>{}</span>".format(name)
+
+def load_cached_artist():
+    """Load the pickled artist."""
+    with open('cached_artist', 'rb') as handle:
+        artist = pickle.load(handle)
+        return artist
+
+def load_cached_playlists():
+    """Load the pickled playlists."""
+    with open("cached_playlists", 'rb') as handle:
+        playlists = pickle.load(handle)
+        return playlists
 
 def create_playlists(artist):
     """Create a dict of remix playlists."""
@@ -147,6 +176,8 @@ def create_playlists(artist):
     for p in playlists:
         p['styled_name'] = re.sub(artist_name, wrapped_name, p['name'])
 
+    with open('cached_playlists', 'wb') as handle:
+        pickle.dump(playlists, handle)
     return playlists
 
 @app.route('/', methods=['GET', 'POST'])
@@ -156,10 +187,16 @@ def search():
         global ARTIST, PLAYLISTS
         artist_query = request.form['query']
         try:
-            ARTIST = Artist.create_from_query(artist_query)
+            if OFFLINE:
+                ARTIST = load_cached_artist()
+            else:
+                ARTIST = Artist.create_from_query(artist_query)
         except:
             return 'Error: No Artist Found!'
-        PLAYLISTS = create_playlists(ARTIST)
+        if OFFLINE:
+            PLAYLISTS = load_cached_playlists()
+        else:
+            PLAYLISTS = create_playlists(ARTIST)
         return redirect(url_for('results'))
 
     return render_template('search.html')

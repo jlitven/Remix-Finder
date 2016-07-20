@@ -41,7 +41,13 @@
 
                 <!-- Playlist Title-->
                 <div>
-                    <span class="remixed_header">{{ playlist['styled_name']|safe }}</span>
+                    <span class="remixed_header"
+                    style="font-family:{{ font }};
+                    background: -webkit-linear-gradient({{ colors[0] }}, {{ colors[1] }});
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    font-size: 4vw;
+                    padding: 10px;">{{ playlist['styled_name']|safe }}</span>
                 </div>
 
                 <!-- Remix Results -->

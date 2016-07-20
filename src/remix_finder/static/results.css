@@ -18,9 +18,9 @@ h1 {
   text-align: center;
 }
 
-.remixed_header{
+.remixed_header_old{
     font-family:lazer84, Courier;
-     background: -webkit-linear-gradient(#f90000, #9200b7);
+    background: -webkit-linear-gradient(#f90000, #9200b7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 4vw;
