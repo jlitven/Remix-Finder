@@ -132,8 +132,8 @@ def load_cached_playlists():
 def create_playlists(artist):
     """Create a dict of remix playlists."""
 
-    num_remixes = 10
-    num_artists = 1
+    num_remixes = 50
+    num_artists = 10
     playlists = {}
     wrapped_name = wrap(artist.name)
     artist_name = artist.name
